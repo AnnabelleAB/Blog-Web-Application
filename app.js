@@ -64,32 +64,43 @@ app.get("/compose", function(req, res) {
 });
 
 app.post("/compose", function(req, res) {
-  const post = {
+
+  const post = new Post({
     title: req.body.postTitle,
     content: req.body.postBody
-  };
-
-  posts.save(function(err) {
-    res.redirect("/");
   });
 
+  // Save new document to database; redirect to "/" GET if all well
+  post.save(function(err) {
+
+    if (!err) {
+
+      res.redirect("/");
+
+    }
+
+  });
 });
 
 
 
-app.get("/posts/:postId", function(req, res) {
-  const requestedPostId = req.params.postId;
 
+
+
+app.get("/post/:postId", function(req, res) {
   Post.findOne({
-    _id: requestedPostId
+    _id: req.params.postId
   }, function(err, post) {
+    if (err) { // post is undefined
+      post = {
+        title: "not found",
+        content: ""
+      };
+    }
     res.render("post", {
-      title: post.title,
-      content: post.content
+      post: post
     });
   });
-
-
 });
 
 app.listen(process.env.PORT || 3000, function(req, res) {
