@@ -1,5 +1,5 @@
 //jshint esversion:6
-
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -22,7 +22,7 @@ app.use(express.static("public"));
 
 // connect mongoose
 
-mongoose.connect("mongodb+srv://annabelleshq:zzzxshq971001@cluster0.jyonr.mongodb.net/postsDB");
+mongoose.connect("mongodb+srv://" + process.env.ATLAS_USER + ":" + process.env.ATLAS_PWD + "@cluster0.jyonr.mongodb.net/postsDB");
 
 const postSchema = {
   title: String,
@@ -64,7 +64,7 @@ app.get("/compose", function(req, res) {
 });
 
 app.post("/compose", function(req, res) {
-
+  //notice need to create a new object
   const post = new Post({
     title: req.body.postTitle,
     content: req.body.postBody
@@ -81,11 +81,6 @@ app.post("/compose", function(req, res) {
 
   });
 });
-
-
-
-
-
 
 app.get("/post/:postId", function(req, res) {
   Post.findOne({
